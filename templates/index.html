@@ -1,0 +1,40 @@
+<title>Etusivu</title>
+<h1>Etusivu</h1>
+
+{% if session.username %}
+<!--FLAW 4-->
+<form action = "/surprise{{session.csrf_token}}" method = "POST">
+    <!--<form action = "/surprise" method = "POST">-->>
+    Submit name for surprise!
+     <br>
+    <textarea name="name" cols="30" rows="2"></textarea>
+    <br>
+    <input type="submit" value = "Valmis">
+</form>
+
+<hr>
+{%for message in messages %}
+{{message.content}}
+<hr>
+{% endfor %}
+
+<form action = "/send" method = "POST">
+    Viesti: <br>
+    <textarea name = "content" rows = "3" cols = "40"></textarea>
+    <input type = "submit" value = "Lähetä">
+    <!--- FLAW 3
+    <input type = "hidden" name = "csrf_token" value = "{{ session.csrf_token }}" >
+    -->
+</form>
+<a href="/logout">Kirjaudu ulos</a>
+
+{% else %}
+<form action="/login" method="POST">
+    <p>Tunnus:<br>
+    <input type="text" name="username"></p>
+    <p>Salasana:<br>
+    <input type="password" name="password"></p>
+    <input type="submit" value="Kirjaudu">
+    </form>  
+
+{% endif %}
