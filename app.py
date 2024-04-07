@@ -14,14 +14,17 @@ db = SQLAlchemy(app)
 def index():
 	result = db.session.execute(text("SELECT content FROM messages"))
 	messages = result.fetchall()
-	return render_template("index.html", messages = messages)
+	contents = []
+	for i in messages:
+		contents.append(i.content)
+	return render_template("index.html", contents = contents)
 
 #FLAW 4
-@app.route("/surprise<csrf_token>", methods = ["POST"] )
+@app.route("/surprise<session_token>", methods = ["POST"])
 #FLAW 4 Solution
 #@app.route("/surprise", methods = ["POST"])
 
-def surprise():
+def surprise(session_token):
 	name = request.form["name"]
 	### FLAW 2
 	return "Surprise!" + name
@@ -30,6 +33,8 @@ def surprise():
 
 @app.route("/send", methods = ["POST"])
 def send():
+	#FLAW 3 Solution
+	#check_user()
 	content = request.form["content"]
 	###FLAW 1
 	db.session.execute(text("INSERT INTO messages (content) VALUES ( '" + content + "')"))
@@ -39,10 +44,20 @@ def send():
 	#db.session.execute(text(sql), {"content" : content})
 	
 	db.session.commit()
-	return redirect("/")
+
+	result = db.session.execute(text("SELECT content FROM messages"))
+	messages = result.fetchall()
+	contents = []
+	for i in messages:
+		contents.append(i.content)
+
+	return contents.__iter__()
+
+	#FLAW 2 Solution
+	#return redirect("/")
 
 
-@app.route("/login", methods = ["POST"])
+@app.route("/login", methods = ["POST", "GET"])
 def login():
 	username = request.form["username"]
 	password = request.form["password"]
@@ -55,13 +70,15 @@ def login():
 	#result = db.session.execute(text(sql), {"username":username})
 
 	user = result.fetchone()
+	if user.password != password:
+		return "Väärä salasana"
 
 	if not user:
 
 		###FLAW1
 		db.session.execute(text("INSERT INTO users (username, password) VALUES('"+ username +"', '" + password + "')"))
 		
-		#FLAW 1 Soluion
+		#FLAW 1 Solution
 		#sql = "INSERT INTO users (username, password) VALUES(username, password)"
 		#db.session.execute(text(sql), {"usernmae" : username, "password" : password})
 
@@ -76,6 +93,7 @@ def login():
 	else:
 		session["username"] = username
 		session["csrf_token"] = urandom(16).hex()
+		session["session_token"] = urandom(16).hex()
 	
 	# FLAW 5
 	if username == "admin" and password == "admin":
@@ -91,6 +109,7 @@ def login():
 @app.route("/logout")
 def logout():
 	del session["username"]
+	del session["session_token"]
 
 	#FLAW 3 Solution
 	#del session["csrf_token"]
