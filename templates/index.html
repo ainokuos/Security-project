@@ -3,8 +3,8 @@
 
 {% if session.username %}
 <!--FLAW 4-->
-<form action = "/surprise{{session.csrf_token}}" method = "POST">
-    <!--<form action = "/surprise" method = "POST">-->>
+<form action = "/surprise{{session.session_token}}" method = "POST">
+    <!--<form action = "/surprise" method = "POST">-->
     Submit name for surprise!
      <br>
     <textarea name="name" cols="30" rows="2"></textarea>
@@ -13,9 +13,10 @@
 </form>
 
 <hr>
-{%for message in messages %}
-{{message.content}}
-<hr>
+{%for content in contents %}
+{{content}}
+</hr>
+
 {% endfor %}
 
 <form action = "/send" method = "POST">
