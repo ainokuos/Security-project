@@ -12,20 +12,19 @@
     <input type="submit" value = "Valmis">
 </form>
 
-<hr>
-{%for content in contents %}
-{{content}}
-</hr>
-
-{% endfor %}
+<!-- FLAW 2 Solution
+    {%for content in contents %}
+    {{contents}}
+    {% endfor %}>-->
 
 <form action = "/send" method = "POST">
     Viesti: <br>
     <textarea name = "content" rows = "3" cols = "40"></textarea>
+    <br>
     <input type = "submit" value = "Lähetä">
     <!--- FLAW 3
-    <input type = "hidden" name = "csrf_token" value = "{{ session.csrf_token }}" >
-    -->
+    <input type = "hidden" name = "csrf_token" value = "{{ session.csrf_token }}" >-->
+
 </form>
 <a href="/logout">Kirjaudu ulos</a>
 
