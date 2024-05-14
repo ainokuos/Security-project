@@ -70,8 +70,7 @@ def login():
 	#result = db.session.execute(text(sql), {"username":username})
 
 	user = result.fetchone()
-	if user.password != password:
-		return "Väärä salasana"
+	
 
 	if not user:
 
@@ -84,6 +83,8 @@ def login():
 
 		db.session.commit()
 		session["username"] = username
+		session["csrf_token"] = urandom(16).hex()
+		session["session_token"] = urandom(16).hex()
 
 		# FLAW 5
 		#hash_value = generate_password_hash(password)
@@ -91,10 +92,12 @@ def login():
 		#db.session.execute(text(sql), {"usernmae" : username, "password" : hash_value})
 	
 	else:
+		if user.password != password:
+			return "Väärä salasana"
 		session["username"] = username
 		session["csrf_token"] = urandom(16).hex()
 		session["session_token"] = urandom(16).hex()
-	
+		
 	# FLAW 5
 	if username == "admin" and password == "admin":
 		session["is_admin"] = True
