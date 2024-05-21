@@ -42,7 +42,7 @@ def send():
 	#db.session.execute(text(sql), {"content" : content})
 	
 	db.session.commit()
-
+	#FLAW 2
 	result = db.session.execute(text("SELECT content FROM messages"))
 	messages = result.fetchall()
 	contents = []
