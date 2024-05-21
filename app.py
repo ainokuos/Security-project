@@ -26,10 +26,8 @@ def index():
 
 def surprise(session_token):
 	name = request.form["name"]
-	### FLAW 2
 	return "Surprise!" + name
-	### FLAW 2 Solution
-	#return render_template("surprise.html", name = name)
+
 
 @app.route("/send", methods = ["POST"])
 def send():
