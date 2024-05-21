@@ -54,7 +54,7 @@ def send():
 	return contents.__iter__()
 
 	#FLAW 2 Solution
-	#return redirect("/")
+	#return redirect("/", contents = contents)
 
 
 @app.route("/login", methods = ["POST", "GET"])
